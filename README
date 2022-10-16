@@ -1,0 +1,13 @@
+Required Packages:
+
+
+for the classes:
+    numpy    
+    pandas
+    scipy
+    sklearn
+
+
+
+Required Data:
+    dream3_txt -> protein protein interaction weight
