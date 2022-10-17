@@ -185,3 +185,16 @@ def get_initialized_fe(background_filepath: str, terms2features_filepath: str, t
 
     # now all that is left to do is upload the querylist using fe.importFiles({'query': querylist }), and running it, using fe.run(cluster=False)
     return fe
+
+
+def create_term_mapping_list(go_terms_filepath: str, term_mapping_filepath: str = 'term_mapping.txt'):
+    """
+    the original file (go_terms_filepath) is in form GOTERM tab PROTEIN, while the term mapping file (term_mapping_filepath) is printed in form PROTEIN tab GOTERM. if a protein has multiple they appear on seperate lines
+    """
+    with open(term_mapping_filepath, 'w') as file:
+        with open(go_terms_filepath, 'r') as go_annotation_file:
+            for _ in range(1): # first line of file has column titles, and should be skipped
+                next(go_annotation_file)
+            for line in go_annotation_file:
+                terms = line.split()
+                file.write(f"{terms[1]}\t{terms[0]}\n")
