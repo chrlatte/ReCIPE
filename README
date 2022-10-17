@@ -10,4 +10,11 @@ for the classes:
 
 
 Required Data:
-    dream3_txt -> protein protein interaction weight
+        `dream3.txt` -> a file containing Protein Protein Interactions
+        `dream3_clusters.json`` -> a file containing clusters of proteins
+        `dream3_go_results.tsv` -> file containing the GO terms corresponding to each protein in dream3
+
+Files generated while running RECIPE:
+        background_proteinlist 
+        term mapping 
+        querylists
