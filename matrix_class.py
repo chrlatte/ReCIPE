@@ -1,13 +1,16 @@
 """
 Author: Charlotte Versavel
 Date:   June 2022
-Last Edited: Oct 2022
+Last Edited: Nov 2022
 
                              matrix_class.py
 
-Purpose: a class to represent a matrix of protein interactions
-TODO: figure out how to use (oct 2022)
-
+Purpose: A file containing two classes:
+        -   ProteinMatrix -> a matrix containing all protein interactions, 
+                             constructed with data read in from a file
+        -   SubMatrix   ->   a smaller matrix constructed with data from a 
+                             ProteinMatrix that contains only a smaller subset 
+                             of proteins
 """
 
 
@@ -129,10 +132,10 @@ class ProteinMatrix:
         """
         try:
             if (self.protein_matrix.loc[protein1, protein2] != 0):
-            # if (self.protein_matrix.loc[protein1, protein2] == 0):
                 return True
         except KeyError:
             return False
+
         return False
 
     def find_degree(self, protein: str) -> int:
@@ -154,12 +157,6 @@ class ProteinMatrix:
         
 
 
-
-
-
-
-
-# TODO: descriptions of the two classes and their functions
 # TODO: test the getters for submatrix
 
 
@@ -267,7 +264,6 @@ class SubMatrix:
         return connections
 
 
-
     def get_interaction(self, protein1: str, protein2: str):
         """             
         Purpose:    to access the interaction values stored in the matrix
@@ -282,42 +278,4 @@ class SubMatrix:
         """
         n_components, labels = connected_components(self.csr_matrix, directed=False, return_labels=True)
 
-        # n_components = connected_components(self.csr_matrix, directed=False, return_labels=False)
-
         return n_components, labels
-    # def find_degree(self, protein: str) -> int:
-    #     """             
-    #     Parameters: protein the name of a protein
-    #     Purpose:    to find the degree of a protein
-    #     Returns:    the degree of the protein
-    #     """
-    #     count = 0
-    #     for elem in self.protein_matrix.loc[protein]:
-    #         if elem != 0:
-    #             count += 1
-        
-    #     return count
-
-    
-
-
-
-
-
-
-
-# a : int | str = "hello"
-
-# class Foo:
-#     def __init__(self, a : int | None = None, b : str | None = None, c : list[str] | None = None) -> None:
-#         pass
-
-# f = Foo(b="hello")
-
-# def bar(b, *args, a=3, **kwargs):
-#     kwargs["whatever"]
-#     ...
-
-# bar(1, 2,3,4, a=18, whatever=3)
-
-
