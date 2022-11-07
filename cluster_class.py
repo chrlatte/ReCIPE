@@ -1,14 +1,12 @@
 """
 Author: Charlotte Versavel
 Date:   June 2022
-Last Edit: Oct 2022
+Last Edit: Nov 2022
 
                              cluster_class.py
 
-Purpose: a class to represent a cluster of proteins
-
-TODO: code documentation / fxn contracts
-TODO: figure out how to use (oct 2022)
+Purpose: a class to store the protein clusters and allow for access of a 
+         specific cluster
 
 """
 
@@ -68,8 +66,8 @@ class AllClusters:
 
     def __repr__(self): 
         """             
-        Purpose:    TODO
-        Returns:    TODO
+        Purpose:    Overloaded Print function - Prints a message indicating how to print clusters
+        Returns:    a new message to print
         """
         return f"AllClusters has {len(self.clusters)} clusters (use the print_all method to see them)"
 
@@ -101,21 +99,22 @@ class AllClusters:
 
     def get_num_clusters(self) -> int:
         """
-        Purpose:    to determine the number of clusters
-        Returns:    
+        Purpose:    to access the number of clusters
+        Returns:    the number of clusters
         """
         return len(self.clusters)
 
     def get_all_cluster_labels(self) -> list():
         """
-        TODO
+        Purpose:    to access all labels (cluster nums)
+        Returns:    the labels of the clusters
         """
-        print("get_all_cluster_labels fxn has not been tested")
         return self.clusters.keys()
 
     def get_all_clusters(self) -> dict():
         """
-        TODO
+        Purpose:    to access all of the clusters
+        Returns:    all clusters in format {cluster_num: [list_of_proteins]}
         """
         return dict(self.clusters)
 
@@ -129,29 +128,6 @@ class AllClusters:
         
         for cluster_num in self.clusters.keys():
             print(f"Cluster {cluster_num}: {self.get_cluster_proteins(cluster_num)}")
-    
 
-    # def print_querylist_of_clusters_to_file(self, clusters_to_print: list(), query_filepath: str = "querylist.txt"):
-    #     """
-    #     clusters_to_print -> specify a list of which clusters to print
-    #     TODO
-    #     """
-    #     output_file = open(query_filepath, 'w')
-    #     for cluster_num in clusters_to_print:
-    #         for protein in self.get_cluster_proteins(cluster_num):
-    #             output_file.write(f"{protein}\tcluster_{cluster_num}\n")
-    #     output_file.close()
-
-
-
-    def print_to_file(self, filename: str = "output.txt", print_as_dict=False) -> None:
-        """
-        TODO
-        """
-        print(f"ERROR! function unfinished: print_to_file")
-        output_file = open(filename, 'w')
-        if print_as_dict:
-            pass
-        pass
 
 
