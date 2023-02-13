@@ -84,14 +84,16 @@ def find_clusters_and_proteins_together(matrix: ProteinMatrix, clusters: AllClus
             # add cluster to list showing that it qualifies, 
             cluster_nums_that_qualify.append(cluster_num)
 
-            # then do analysis on the cluster -> create a list of qualifying proteins
-            qualifying_proteins = qualifying_proteins_using_submatrix(cluster_num, submatrix, clusters, degreelist, ratio=protein_ratio, constant=protein_constant, max_degree=max_degree, min_components_that_protein_connects=min_components_that_protein_connects, use_sqrt=use_sqrt)
 
+######## min components has to do with sqrt of the number components
+
+            ### PLEASE NOTE: THIS FUNCTION CALL FINDS PROTEINS BASED ON THE NUMBER OF COMPONENTS IN A CLUSTER ###
+            qualifying_proteins = qualifying_proteins_using_num_components(cluster_num, submatrix, clusters, degreelist, ratio=protein_ratio, constant=protein_constant, max_degree=max_degree, use_sqrt=use_sqrt)
+
+########
             if qualifying_proteins: # not empty
                 qualifying_proteins_dict[cluster_num] = qualifying_proteins
             
-
-
     return cluster_nums_that_qualify, qualifying_proteins_dict
 
 
@@ -133,6 +135,59 @@ def qualifying_proteins_using_submatrix(cluster_num: int, submatrix: SubMatrix, 
                     qualifying_proteins.append(protein)
 
     return qualifying_proteins
+
+
+#############################################################################
+
+
+
+
+#############################################################################
+
+
+def qualifying_proteins_using_num_components(cluster_num: int, submatrix: SubMatrix, clusters: AllClusters, degreelist: DegreeList, ratio: float = .5, constant: int = 0, max_degree: int = 500, use_sqrt:bool = False) -> list():
+    """
+    TODO : a revised version of the qualifying_proteins_using_submatrix fxn that incorperates the number of components in a cluster when determining if a protein qualifies to reconnect it.
+    """
+    num_components, labels = submatrix.get_num_components_and_labels()
+
+    min_components_that_protein_connects = 0
+
+    if use_sqrt:
+        min_components_that_protein_connects = int(constant + ratio * sqrt(num_components))
+    else:
+        min_components_that_protein_connects = constant + ratio * len(num_components)
+        
+    ### POPULATE COMPONENT DICTIONARY ###
+    component_dictionary = dict() # protein : component_num
+    j = 0
+    for array in [(np.array(submatrix.get_list_of_proteins())[np.nonzero(labels == i)]) for i in range(num_components)]:
+        for protein in array:
+            component_dictionary[protein] = j
+        j += 1
+    
+    ## FIND CONNECTED PROTEINS AND DETERMINE IF THEY QUALIFY 
+    qualifying_proteins = list()
+
+    for protein in (degreelist.get_list_of_proteins_sorted_by_degree()):   
+
+        if (degreelist.get_degree_of_protein(protein, max_degree=max_degree) <= max_degree):
+            num_edges, which_proteins = degreelist.determine_num_edges_to_cluster(protein, clusters.get_cluster_proteins(cluster_num), also_return_which_proteins=True)
+                    
+            if (num_edges >= min_components_that_protein_connects):
+                set_of_components_that_protein_connects = degreelist.which_components_of_a_cluster_would_a_protein_connect(protein, clusters.get_cluster_proteins(cluster_num), component_dictionary, connected_proteins_within_cluster=which_proteins)
+
+                if len(set_of_components_that_protein_connects) >= min_components_that_protein_connects:
+                    qualifying_proteins.append(protein)
+                
+                ###### TODO: possibly here is where I could 'combine' the components that are now connected by a singluar protein being added back
+
+    return qualifying_proteins
+
+
+
+
+
 
 
 
