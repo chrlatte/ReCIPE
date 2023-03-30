@@ -31,7 +31,8 @@ class AllClusters:
     def __init__(self, csv_filename: str = "", protein_to_cluster_dict: dict() ={}) -> None:
         """  
         Parameters: csv_filename is the name of a csv file containing several 
-                    clusters of proteins   
+                    clusters of proteins 
+                        in the form 1   1.0     Protein1    Protein2 ...
                     protein_to_cluster_dict is a dictionary with the form { protein : cluster_num }
         Purpose:    to populate several single clusters with data from a CSV 
                     file, or from a dictionary
@@ -42,7 +43,7 @@ class AllClusters:
         if csv_filename != "":
             try:
                 with open(csv_filename, "r") as data:
-
+                    
                     for item in data:
                         list_of_proteins = item.strip().split("\t")
 
