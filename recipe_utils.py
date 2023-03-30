@@ -22,6 +22,7 @@ from func_e.FUNC_E import FUNC_E
 
 from json import load
 from math import sqrt
+from math import ceil
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  * * * * * * * * * * * * * * * FUNCTIONS * * * * * * * * * * * * * * *
@@ -148,13 +149,17 @@ def qualifying_proteins_using_submatrix(cluster_num: int, submatrix: SubMatrix, 
 def qualifying_proteins_using_num_components(cluster_num: int, submatrix: SubMatrix, clusters: AllClusters, degreelist: DegreeList, ratio: float = .5, constant: int = 0, max_degree: int = 500, use_sqrt:bool = False) -> list():
     """
     TODO : a revised version of the qualifying_proteins_using_submatrix fxn that incorperates the number of components in a cluster when determining if a protein qualifies to reconnect it.
+
+
     """
     num_components, labels = submatrix.get_num_components_and_labels()
 
     min_components_that_protein_connects = 0
 
     if use_sqrt:
-        min_components_that_protein_connects = int(constant + ratio * sqrt(num_components))
+        # min_components_that_protein_connects = int(constant + ratio * sqrt(num_components))
+        min_components_that_protein_connects = ceil(constant + ratio * sqrt(num_components))
+
     else:
         min_components_that_protein_connects = constant + ratio * len(num_components)
         
@@ -180,7 +185,6 @@ def qualifying_proteins_using_num_components(cluster_num: int, submatrix: SubMat
                 if len(set_of_components_that_protein_connects) >= min_components_that_protein_connects:
                     qualifying_proteins.append(protein)
                 
-                ###### TODO: possibly here is where I could 'combine' the components that are now connected by a singluar protein being added back
 
     return qualifying_proteins
 
