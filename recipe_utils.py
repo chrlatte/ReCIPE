@@ -34,13 +34,17 @@ def initialize_matrix_clusters_degreelist(interactions_filepath: str, clusters_f
     a file that has interactions of the form protein1 TAB protein2 TAB interaction
     a file that containing a dictionary, for each protein in a cluster, the protein's name is linked to its cluster number
     """
-    clusters_dict = {}
-    # convert actual cluster file to a dictionary!!
-    with open(clusters_filepath, "r") as cluster_dict_file:
-        clusters_dict = load(cluster_dict_file)
+    # clusters_dict = {}
+    # # convert actual cluster file to a dictionary!!
+    # with open(clusters_filepath, "r") as cluster_dict_file:
+    #     clusters_dict = load(cluster_dict_file)
+    # clusters = AllClusters(protein_to_cluster_dict=clusters_dict)
+
+
+    # NOTE:  the above is commented out because the file format has changed from a .json to a csv file
     
     matrix = ProteinMatrix(interactions_filepath)
-    clusters = AllClusters(protein_to_cluster_dict=clusters_dict)
+    clusters = AllClusters(csv_filename=clusters_filepath)
     degreelist = DegreeList(matrix)
 
     return matrix, clusters, degreelist
@@ -53,7 +57,7 @@ def print_protein_background_to_file(matrix: ProteinMatrix, filename: str = "bac
             file.write(f"{protein}\n")
 
 
-def find_clusters_and_proteins_together(matrix: ProteinMatrix, clusters: AllClusters, degreelist: DegreeList, cluster_ratio: float = 1, cluster_constant: int = 0, protein_ratio: float = .05, protein_constant: int = 2, min_components_that_protein_connects: int = -1, max_degree: int = 500, use_sqrt:bool = False, find_clusters_that_are_MORE_connected: bool = False) -> list() and dict():
+def find_clusters_and_proteins_together(matrix: ProteinMatrix, clusters: AllClusters, degreelist: DegreeList, cluster_ratio: float = 1, cluster_constant: int = 0, protein_ratio: float = .05, protein_constant: int = 2, min_components: int = -1, max_degree: int = 500, use_sqrt:bool = False, find_clusters_that_are_MORE_connected: bool = False) -> list() and dict():
     """
     function is a version of find_clusters_that_match_criteria, that, once it finds the cluster, finds corresponding proteins at the same time so that the submatrix doesn't need to be reconstructed
 
@@ -89,7 +93,7 @@ def find_clusters_and_proteins_together(matrix: ProteinMatrix, clusters: AllClus
 ######## min components has to do with sqrt of the number components
 
             ### PLEASE NOTE: THIS FUNCTION CALL FINDS PROTEINS BASED ON THE NUMBER OF COMPONENTS IN A CLUSTER ###
-            qualifying_proteins = qualifying_proteins_using_num_components(cluster_num, submatrix, clusters, degreelist, ratio=protein_ratio, constant=protein_constant, max_degree=max_degree, use_sqrt=use_sqrt)
+            qualifying_proteins = qualifying_proteins_using_num_components(cluster_num, submatrix, clusters, degreelist, ratio=protein_ratio, constant=protein_constant, max_degree=max_degree, use_sqrt=use_sqrt, min_components_that_protein_connects=min_components)
 
 ########
             if qualifying_proteins: # not empty
@@ -146,7 +150,7 @@ def qualifying_proteins_using_submatrix(cluster_num: int, submatrix: SubMatrix, 
 #############################################################################
 
 
-def qualifying_proteins_using_num_components(cluster_num: int, submatrix: SubMatrix, clusters: AllClusters, degreelist: DegreeList, ratio: float = .5, constant: int = 0, max_degree: int = 500, use_sqrt:bool = False) -> list():
+def qualifying_proteins_using_num_components(cluster_num: int, submatrix: SubMatrix, clusters: AllClusters, degreelist: DegreeList, ratio: float = .5, constant: int = 0, max_degree: int = 500, use_sqrt:bool = False,     min_components_that_protein_connects = 2) -> list():
     """
     TODO : a revised version of the qualifying_proteins_using_submatrix fxn that incorperates the number of components in a cluster when determining if a protein qualifies to reconnect it.
 
@@ -154,14 +158,13 @@ def qualifying_proteins_using_num_components(cluster_num: int, submatrix: SubMat
     """
     num_components, labels = submatrix.get_num_components_and_labels()
 
-    min_components_that_protein_connects = 0
 
     if use_sqrt:
-        # min_components_that_protein_connects = int(constant + ratio * sqrt(num_components))
-        min_components_that_protein_connects = ceil(constant + ratio * sqrt(num_components))
+        min_components_that_protein_connects = max(min_components_that_protein_connects, int(constant + ratio * sqrt(num_components)))
+        # min_components_that_protein_connects = ceil(constant + ratio * sqrt(num_components))
 
     else:
-        min_components_that_protein_connects = constant + ratio * len(num_components)
+        min_components_that_protein_connects = max(min_components_that_protein_connects, int(constant + ratio * (num_components)))
         
     ### POPULATE COMPONENT DICTIONARY ###
     component_dictionary = dict() # protein : component_num
