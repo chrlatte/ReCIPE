@@ -257,3 +257,65 @@ def create_term_mapping_list(go_terms_filepath: str, term_mapping_filepath: str 
             for line in go_annotation_file:
                 terms = line.split()
                 file.write(f"{terms[1]}\t{terms[0]}\n")
+
+
+            
+
+
+########
+
+
+def get_cluster_connectivity (
+    matrix:ProteinMatrix,
+    degreelist:DegreeList,
+    clusters:AllClusters,
+    added_proteins:dict,
+    sorted:bool=False,
+
+):
+    """
+    returns a dictionary of cluster_num : percent_connectivity
+    note: uses SubMatrix from matrix class
+
+    can specify if you want sorted.
+    if added_proteins is specified (not empty), then it will add those proteins to the cluster before calculating connectivity
+
+    """
+    proteins = matrix.get_list_of_proteins()
+    degree_dict = dict(degreelist.sorted_protein_degree_dict)
+    matrix_df = matrix.get_matrix()
+    cluster_connectivity = {}
+
+    for cluster_num in clusters.get_all_cluster_labels():
+        # get all the proteins associated to a cluster  
+        cluster_proteins = clusters.get_cluster_proteins(cluster_num)
+        
+        # added_cluster_proteins is empty in the case that none have been added, or if added proteins was not specified
+        added_cluster_proteins = [] if not added_proteins or cluster_num not in added_proteins else added_proteins[cluster_num]
+        
+        # get the list of potential proteins to add to cluster 
+        submatrix = SubMatrix(list(set(cluster_proteins + added_cluster_proteins)), matrix)
+        components_and_labels = submatrix.get_num_components_and_labels()
+        num_components = components_and_labels[0]
+
+        # current ratio of clusters to proteins
+        num_proteins = len(cluster_proteins)
+        percent_connectivity = (num_proteins - num_components)/num_proteins
+        cluster_connectivity[cluster_num] = percent_connectivity
+
+    
+    if sorted:
+        cluster_connectivity = {k: v for k, v in sorted(cluster_connectivity.items(), key=lambda item: item[1])}
+
+    return cluster_connectivity
+
+
+def top_n_proteins(
+        qualifying_proteins:dict,
+        n:int # max # of proteins to return
+):
+    n_proteins = dict()
+    for key in qualifying_proteins:
+        n_proteins[key] = qualifying_proteins[key][0:n]
+    
+    return n_proteins
