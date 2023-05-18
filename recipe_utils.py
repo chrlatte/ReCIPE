@@ -269,8 +269,8 @@ def get_cluster_connectivity (
     matrix:ProteinMatrix,
     degreelist:DegreeList,
     clusters:AllClusters,
-    added_proteins:dict,
-    sorted:bool=False,
+    added_proteins:dict={},
+    sort_it:bool=False,
 
 ):
     """
@@ -292,7 +292,6 @@ def get_cluster_connectivity (
         
         # added_cluster_proteins is empty in the case that none have been added, or if added proteins was not specified
         added_cluster_proteins = [] if not added_proteins or cluster_num not in added_proteins else added_proteins[cluster_num]
-        
         # get the list of potential proteins to add to cluster 
         submatrix = SubMatrix(list(set(cluster_proteins + added_cluster_proteins)), matrix)
         components_and_labels = submatrix.get_num_components_and_labels()
@@ -303,12 +302,11 @@ def get_cluster_connectivity (
         percent_connectivity = (num_proteins - num_components)/num_proteins
         cluster_connectivity[cluster_num] = percent_connectivity
 
+    if sort_it:
+        sorted_cluster_connectivity:dict= {k: v for k, v in sorted(cluster_connectivity.items(), key=lambda item: item[1], reverse=False)}
+        return sorted_cluster_connectivity
     
-    if sorted:
-        cluster_connectivity = {k: v for k, v in sorted(cluster_connectivity.items(), key=lambda item: item[1])}
-
     return cluster_connectivity
-
 
 def top_n_proteins(
         qualifying_proteins:dict,
