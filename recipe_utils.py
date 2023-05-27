@@ -317,3 +317,20 @@ def top_n_proteins(
         n_proteins[key] = qualifying_proteins[key][0:n]
     
     return n_proteins
+
+
+def calculate_connectivity_difference(connectivity_before:dict, connectivity_after:dict, sort_it:bool=True):
+    """
+    Calculates the difference between the connectivity of each cluster before and after the addition of a new protein
+    """
+    difference = {}
+    for cluster in connectivity_before:
+        difference[cluster] = connectivity_after[cluster] - connectivity_before[cluster]
+    
+    
+    if sort_it:
+        sorted_difference:dict= {k: v for k, v in sorted(difference.items(), key=lambda item: item[1], reverse=True)}
+        return sorted_difference
+    
+    
+    return difference
