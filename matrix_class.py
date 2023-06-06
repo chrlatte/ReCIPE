@@ -18,14 +18,6 @@ from scipy.sparse import csr_matrix # used in submatrix class
 from scipy.sparse.csgraph import connected_components # used in submatrix class
 
 class ProteinMatrix:
-
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    * * * * * * * * * * * * * MEMBER VARIABLES * * * * * * * * * * * * * *  
-    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    protein_data_df = pd.DataFrame
-    list_of_all_proteins_in_matrix = np.array
-    protein_matrix = pd.DataFrame(dtype=float)
-
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     * * * * * * * * * * * * * * INITIALIZERS * * * * * * * * * * * * * * *  
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -35,6 +27,18 @@ class ProteinMatrix:
         Purpose:    to populate a matrix with data from a CSV file
         Returns:    n/a
         """
+
+        """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+        * * * * * * * * * * * * * MEMBER VARIABLES * * * * * * * * * * * * * *  
+        """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+        protein_data_df = pd.DataFrame
+        list_of_all_proteins_in_matrix = np.array
+        protein_matrix = pd.DataFrame(dtype=float)
+
+        """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+        """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    
         try:
             # read csv file into a dataframe
             self.protein_data_df = pd.read_csv(csv_filename, delimiter = '\s+', 
@@ -156,14 +160,8 @@ class ProteinMatrix:
 
 
 
-
-
-
 # TODO: descriptions of the two classes and their functions
 # TODO: test the getters for submatrix
-
-
-
 class SubMatrix:
 
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -190,7 +188,6 @@ class SubMatrix:
         # print(f"initializing submatrix from {proteins_to_map}. the unique proteins are: {list(set(proteins_to_map))}")
         # initialize list of proteins:
         self.list_of_all_proteins_in_matrix = list(set(proteins_to_map))
-
         
         # inititalize matrix:
         self._init_matrix(original_matrix)
@@ -206,7 +203,7 @@ class SubMatrix:
         self.protein_matrix = pd.DataFrame(
             columns=self.list_of_all_proteins_in_matrix, 
             index=self.list_of_all_proteins_in_matrix)
-        self.protein_matrix.fillna(0, inplace=True)
+        self.protein_matrix.fillna(0.0, inplace=True)
         
         for i in range(np.size(self.list_of_all_proteins_in_matrix)):
             for j in range (i + 1, np.size(self.list_of_all_proteins_in_matrix)):
@@ -223,8 +220,6 @@ class SubMatrix:
                 except KeyError: 
                     pass
                     # print(f"key error in init_matrix function in submatrix")
-
-
 
     def _init_csr_matrix_(self):
         """             
