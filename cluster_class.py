@@ -6,7 +6,8 @@ Last Edit: Nov 2022
                              cluster_class.py
 
 Purpose: a class to store the protein clusters and allow for access of a 
-         specific cluster
+         specific cluster. 
+         Also, allows 
 
 """
 
@@ -22,7 +23,7 @@ class AllClusters:
     * * * * * * * * * * * * * MEMBER VARIABLES * * * * * * * * * * * * * *  
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-    clusters = defaultdict(lambda: []) # a dict of relation {cluster_num : list_of_proteins_in_cluster}
+    # clusters = defaultdict(lambda: []) # a dict of relation {cluster_num : list_of_proteins_in_cluster}
     
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
     * * * * * * * * * * * * * * INITIALIZERS * * * * * * * * * * * * * * *  
@@ -38,7 +39,8 @@ class AllClusters:
                     file, or from a dictionary
         Returns:    n/a
         """
-        self.clusters.clear()
+
+        self.clusters = defaultdict(lambda: [])
 
         if csv_filename != "":
             try:
@@ -72,6 +74,9 @@ class AllClusters:
         """
         return f"AllClusters has {len(self.clusters)} clusters (use the print_all method to see them)"
 
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    * * * * * * * * * * * * * * * SETTERS * * * * * * * * * * * * * * * * *  
+    """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
     def add_protein_to_cluster(self, protein:str, cluster_num:int) -> None:
         """             
@@ -83,6 +88,16 @@ class AllClusters:
         """
         self.clusters[cluster_num].append(protein)
         # print(f"appended cluster {cluster_num}: {self.clusters[cluster_num]}")
+
+    def sort_dictionary(self) -> None:
+        """             
+        Purpose:    to sort the dictionary by number of proteins in each cluster
+        Returns:    n/a
+        """
+        sorted_clusters = dict(sorted(self.clusters.items(), key=lambda x: len(x[1])))
+        self.clusters = sorted_clusters
+        # print(f"appended cluster {cluster_num}: {self.clusters[cluster_num]}")
+
 
     
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -129,6 +144,15 @@ class AllClusters:
         
         for cluster_num in self.clusters.keys():
             print(f"Cluster {cluster_num}: {self.get_cluster_proteins(cluster_num)}")
+    
+    
+    def filter_clusters_by_size(self, min_size, max_size):
+        """             
+        Purpose:    to retrieve a dictionary that only contains clusters within a certain size range
+        Returns:    dictionary
+        """
+        filtered_dict = {key: value for key, value in self.clusters.items() if min_size <= len(value) <= max_size}
+        return filtered_dict
 
 
 

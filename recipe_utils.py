@@ -270,7 +270,9 @@ def get_cluster_connectivity (
     degreelist:DegreeList,
     clusters:AllClusters,
     added_proteins:dict={},
+    percentages:bool=True,
     sort_it:bool=False,
+
 
 ):
     """
@@ -296,17 +298,21 @@ def get_cluster_connectivity (
         submatrix = SubMatrix(list(set(cluster_proteins + added_cluster_proteins)), matrix)
         components_and_labels = submatrix.get_num_components_and_labels()
         num_components = components_and_labels[0]
-
         # current ratio of clusters to proteins
-        num_proteins = len(cluster_proteins)
-        percent_connectivity = (num_proteins - num_components)/num_proteins
-        cluster_connectivity[cluster_num] = percent_connectivity
+        if (percentages):
+            num_proteins = len(cluster_proteins)
+            percent_connectivity = num_components/num_proteins
+            cluster_connectivity[cluster_num] = percent_connectivity
+        else:
+            cluster_connectivity[cluster_num] = num_components
 
     if sort_it:
         sorted_cluster_connectivity:dict= {k: v for k, v in sorted(cluster_connectivity.items(), key=lambda item: item[1], reverse=False)}
         return sorted_cluster_connectivity
     
     return cluster_connectivity
+
+
 
 def top_n_proteins(
         qualifying_proteins:dict,
