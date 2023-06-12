@@ -264,7 +264,6 @@ def create_term_mapping_list(go_terms_filepath: str, term_mapping_filepath: str 
 
 ########
 
-
 def get_cluster_connectivity (
     matrix:ProteinMatrix,
     degreelist:DegreeList,
@@ -301,17 +300,17 @@ def get_cluster_connectivity (
         # current ratio of clusters to proteins
         if (percentages):
             num_proteins = len(cluster_proteins)
-            percent_connectivity = num_components/num_proteins
+            # The following is a linear relationship that guarantees that a cluster with 1 component is 100% connected, and a cluster with 0 edges between proteins is 0% connected  
+            percent_connectivity = 1 - (num_components - 1) / (num_proteins - 1)
             cluster_connectivity[cluster_num] = percent_connectivity
         else:
             cluster_connectivity[cluster_num] = num_components
 
     if sort_it:
-        sorted_cluster_connectivity:dict= {k: v for k, v in sorted(cluster_connectivity.items(), key=lambda item: item[1], reverse=False)}
+        sorted_cluster_connectivity:dict = {k: v for k, v in sorted(cluster_connectivity.items(), key=lambda item: item[1], reverse=False)}
         return sorted_cluster_connectivity
     
     return cluster_connectivity
-
 
 
 def top_n_proteins(
