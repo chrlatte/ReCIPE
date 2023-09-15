@@ -29,12 +29,13 @@ class AllClusters:
     * * * * * * * * * * * * * * INITIALIZERS * * * * * * * * * * * * * * *  
     """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-    def __init__(self, csv_filename: str = "", protein_to_cluster_dict: dict() ={}) -> None:
+    def __init__(self, csv_filename: str = "", protein_to_cluster_dict: dict() ={}, cluster_dict: dict() ={}) -> None:
         """  
         Parameters: csv_filename is the name of a csv file containing several 
                     clusters of proteins 
                         in the form 1   1.0     Protein1    Protein2 ...
                     protein_to_cluster_dict is a dictionary with the form { protein : cluster_num }
+                    clusters_dict is a dictionary that contains clusters in the form {cluster_num: [list_of_proteins]}
         Purpose:    to populate several single clusters with data from a CSV 
                     file, or from a dictionary
         Returns:    n/a
@@ -60,9 +61,10 @@ class AllClusters:
         elif protein_to_cluster_dict: # dictionary not empty
             for protein in protein_to_cluster_dict.keys():
                 self.add_protein_to_cluster(protein, int(protein_to_cluster_dict[protein]))
-        
+        elif cluster_dict:
+            self.clusters = cluster_dict
         else: # no filename or dictionary passed in
-            print(f"ERROR! please specify a [csv_filename] or a [protein_to_cluster_dict] to initialize the clusters.")
+            print(f"ERROR! please specify a [csv_filename], [protein_to_cluster_dict], or [cluster_dict] to initialize the clusters.")
             
 
 
