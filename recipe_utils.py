@@ -22,7 +22,8 @@ from func_e.FUNC_E import FUNC_E
 
 from json import load
 from math import sqrt
-from math import ceil
+# from math import ceil
+from math import floor
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
  * * * * * * * * * * * * * * * FUNCTIONS * * * * * * * * * * * * * * *
@@ -39,10 +40,8 @@ def initialize_matrix_clusters_degreelist(interactions_filepath: str, clusters_f
     with open(clusters_filepath, "r") as cluster_dict_file:
         clusters_dict = load(cluster_dict_file)
     clusters = AllClusters(protein_to_cluster_dict=clusters_dict)
-    # NOTE:  the above is commented out because the file format has changed from a .json to a csv file
     
     matrix = ProteinMatrix(interactions_filepath)
-    # clusters = AllClusters(csv_filename=clusters_filepath)
     degreelist = DegreeList(matrix)
 
     return matrix, clusters, degreelist
@@ -157,11 +156,11 @@ def qualifying_proteins_using_num_components(cluster_num: int, submatrix: SubMat
 
 
     if use_sqrt:
-        min_components_that_protein_connects = max(min_components_that_protein_connects, ceil(constant + ratio * sqrt(num_components)))
+        min_components_that_protein_connects = max(min_components_that_protein_connects, floor(constant + ratio * sqrt(num_components)))
         # min_components_that_protein_connects = ceil(constant + ratio * sqrt(num_components))
 
     else:
-        min_components_that_protein_connects = max(min_components_that_protein_connects, ceil(constant + ratio * (num_components)))
+        min_components_that_protein_connects = max(min_components_that_protein_connects, floor(constant + ratio * (num_components)))
         
     ### POPULATE COMPONENT DICTIONARY ###
     component_dictionary = dict() # protein : component_num
