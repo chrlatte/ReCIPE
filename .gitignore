@@ -3,3 +3,6 @@ demo_data/background_proteinlist.txt
 demo_data/og_query.txt
 demo_data/term_mapping.txt
 demo_data/updated_query.txt
+
+data/*
+
